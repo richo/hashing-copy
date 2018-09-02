@@ -33,6 +33,7 @@ pub fn copy_and_hash<R: ?Sized, W: ?Sized, H>(reader: &mut R, writer: &mut W) ->
 mod tests {
     use super::copy_and_hash;
     extern crate sha2;
+    use std::fs::File;
 
     #[test]
     fn test_copies_small_things() {
@@ -45,5 +46,17 @@ mod tests {
         assert_eq!(ret.0, len);
         assert_eq!(ret.1.as_slice(), result);
         assert_eq!(String::from_utf8(output).unwrap(), input);
+    }
+
+    #[test]
+    fn test_copies_large_things() {
+        let result = hex!("87bcb5058da1531811646857b8d5684429480ef938fd0b143408c42c2fe8e974");
+        let len = 84084;
+        let mut input = File::open("test/many_butts").unwrap();
+        let mut output = vec![];
+
+        let ret = copy_and_hash::<_, _, sha2::Sha256>(&mut input, &mut output).unwrap();
+        assert_eq!(ret.0, len);
+        assert_eq!(ret.1.as_slice(), result);
     }
 }
