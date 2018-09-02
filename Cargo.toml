@@ -1,0 +1,6 @@
+[package]
+name = "hashing-copy"
+version = "0.1.0"
+authors = ["Richo Healey <richo@stripe.com>"]
+
+[dependencies]
