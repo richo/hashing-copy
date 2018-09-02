@@ -2,6 +2,10 @@
 name = "hashing-copy"
 version = "0.1.0"
 authors = ["Richo Healey <richo@stripe.com>"]
+license = "MIT"
+description = """Copies from a Read to a Write, hashing the content with a Digest
+along the way. Allowing you to hash large files while copying them to avoid
+having to read them out again"""
 
 [dependencies]
 digest = "0.7"
