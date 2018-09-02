@@ -4,3 +4,8 @@ version = "0.1.0"
 authors = ["Richo Healey <richo@stripe.com>"]
 
 [dependencies]
+digest = "0.7"
+
+[dev-dependencies]
+sha2 = "0.7"
+hex-literal= "0.1"
