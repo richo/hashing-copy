@@ -6,6 +6,7 @@ license = "MIT"
 description = """Copies from a Read to a Write, hashing the content with a Digest
 along the way. Allowing you to hash large files while copying them to avoid
 having to read them out again"""
+repository = "https://github.com/richo/hashing-copy"
 
 [dependencies]
 digest = "0.7"
