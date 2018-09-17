@@ -9,6 +9,28 @@ use std::io::{self, Read, Write, ErrorKind};
 
 const DEFAULT_BUF_SIZE: usize = 4 * 1024;
 
+/// Copy data from `reader` to `writer`, along the way hashing using `H` which must implement
+/// Digest. Return value is the same as for `std::io::copy` except that it returns a 2 tuple of the
+/// bytes copied, and the hash value, or an `io::Error`.
+///
+/// ```rust
+/// # extern crate sha2;
+/// # extern crate hashing_copy;
+/// # use hashing_copy::copy_and_hash;
+/// use std::io;
+/// use sha2::Sha256;
+///
+/// let mut reader: &[u8] = b"hello world";
+/// let mut writer: Vec<u8> = vec![];
+///
+/// let (bytes_copied, hash) = copy_and_hash::<_, _, Sha256>(&mut reader, &mut writer)
+///                                 .expect("Couldn't copy data");
+///
+/// assert_eq!(11, bytes_copied);
+/// assert_eq!(&b"hello world"[..], &writer[..]);
+/// assert_eq!(hash[..=8], [0xb9, 0x4d, 0x27, 0xb9, 0x93, 0x4d, 0x3e, 0x08, 0xa5]);
+/// ```
+
 pub fn copy_and_hash<R: ?Sized, W: ?Sized, H>(reader: &mut R, writer: &mut W) -> io::Result<(u64, GenericArray<u8, H::OutputSize>)>
     where R: Read, W: Write, H: Digest
 {
