@@ -7,7 +7,7 @@ use digest::generic_array::GenericArray;
 
 use std::io::{self, Read, Write, ErrorKind};
 
-const DEFAULT_BUF_SIZE: usize = 4 * 1024;
+const DEFAULT_BUF_SIZE: usize = 4 * 1024 * 1024;
 
 /// Copy data from `reader` to `writer`, along the way hashing using `H` which must implement
 /// Digest. Return value is the same as for `std::io::copy` except that it returns a 2 tuple of the
@@ -34,7 +34,7 @@ const DEFAULT_BUF_SIZE: usize = 4 * 1024;
 pub fn copy_and_hash<R: ?Sized, W: ?Sized, H>(reader: &mut R, writer: &mut W) -> io::Result<(u64, GenericArray<u8, H::OutputSize>)>
     where R: Read, W: Write, H: Digest
 {
-    let mut buf = [0; DEFAULT_BUF_SIZE];
+    let mut buf = vec![0; DEFAULT_BUF_SIZE];
     let mut hasher = H::new();
 
     let mut written = 0;
@@ -75,6 +75,18 @@ mod tests {
         let result = hex!("87bcb5058da1531811646857b8d5684429480ef938fd0b143408c42c2fe8e974");
         let len = 84084;
         let mut input = File::open("test/many_butts").unwrap();
+        let mut output = vec![];
+
+        let ret = copy_and_hash::<_, _, sha2::Sha256>(&mut input, &mut output).unwrap();
+        assert_eq!(ret.0, len);
+        assert_eq!(ret.1.as_slice(), result);
+    }
+
+    #[test]
+    fn test_copies_things_spanning_multiple_blocks() {
+        let result = hex!("4c34caef17ee3d709ea9f3c964a79722f79118cd00869a340c3bdf1bb38375c3");
+        let len = 7020351;
+        let mut input = File::open("test/extremely_many_butts").unwrap();
         let mut output = vec![];
 
         let ret = copy_and_hash::<_, _, sha2::Sha256>(&mut input, &mut output).unwrap();
