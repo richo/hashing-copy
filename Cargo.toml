@@ -9,8 +9,8 @@ having to read them out again"""
 repository = "https://github.com/richo/hashing-copy"
 
 [dependencies]
-digest = "0.7"
+digest = "0.8.0"
 
 [dev-dependencies]
-sha2 = "0.7"
-hex-literal= "0.1"
+sha2 = "0.8.0"
+hex-literal= "0.1.1"
